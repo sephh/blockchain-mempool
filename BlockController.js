@@ -13,19 +13,24 @@ class BlockController {
 	constructor(express) {
 		this.express = express;
 		this.blockchain = new Blockchain();
-		this.getBlockByIndex();
+		this.getBlockByHeight();
 		this.postNewBlock();
+		this.getStarByHash();
+		this.getStarsByAddress();
 	}
 
 	/**
-	 * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
+	 * @name Get Block by Height
+	 * @route {Get} /block/:height
+	 * @queryparam hash {String} the star block height
+	 * @response the block of the related height
 	 */
-	getBlockByIndex() {
+	getBlockByHeight() {
 		const { blockchain } = this;
 
-		this.express.get('/block/:index', async (req, res) => {
-			const { index } = req.params;
-			const block = await blockchain.getBlock(index);
+		this.express.get('/block/:height', async (req, res) => {
+			const { height } = req.params;
+			const block = await blockchain.getBlock(height);
 
 			if (block) {
 				res.send(block);
@@ -44,6 +49,60 @@ class BlockController {
 	 */
 	postNewBlock() {
 		this.express.post('/block', async (req, res) => {
+			//TODO
+			// const body = req.body;
+			//
+			// if(!body || !body.body){
+			// 	res.status(500).send('Missing required field "body"');
+			// 	return;
+			// }
+			//
+			// const blockAux = new Block(body.body);
+			// const block = await this.blockchain.addBlock(blockAux);
+			//
+			// if (block) {
+			// 	res.send(block);
+			// } else {
+			// 	res.status(500).send('Error on add block.');
+			// }
+		});
+	}
+
+	/**
+	 * @name Get Star by Hash
+	 * @route {Get} /stars/:hash
+	 * @queryparam hash {String} the star block hash
+	 * @response the block of the related hash
+	 */
+	getStarByHash() {
+		this.express.get('/stars/:hash', async (req, res) => {
+			//TODO
+			// const body = req.body;
+			//
+			// if(!body || !body.body){
+			// 	res.status(500).send('Missing required field "body"');
+			// 	return;
+			// }
+			//
+			// const blockAux = new Block(body.body);
+			// const block = await this.blockchain.addBlock(blockAux);
+			//
+			// if (block) {
+			// 	res.send(block);
+			// } else {
+			// 	res.status(500).send('Error on add block.');
+			// }
+		});
+	}
+
+	/**
+	 * @name Get Starts by Address
+	 * @route {Get} /stars/:address
+	 * @queryparam hash {String} the star block hash
+	 * @response the block of the related hash
+	 */
+	getStarsByAddress() {
+		this.express.get('/stars/:address', async (req, res) => {
 			//TODO
 			// const body = req.body;
 			//
