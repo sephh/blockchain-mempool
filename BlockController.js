@@ -36,25 +36,30 @@ class BlockController {
 	}
 
 	/**
-	 * Implement a POST Endpoint to add as new Block, url: "/api/block"
+	 * @name Star Registration
+	 * @route {POST} /block
+	 * @bodyparam address {String} the user wallet address
+	 * @bodyparam star {{dec {String}, ra {String}, story {String}}} the start data
+	 * @response block {Block} the block with the start data
 	 */
 	postNewBlock() {
 		this.express.post('/block', async (req, res) => {
-			const body = req.body;
-
-			if(!body || !body.body){
-				res.status(500).send('Missing required field "body"');
-				return;
-			}
-
-			const blockAux = new Block(body.body);
-			const block = await this.blockchain.addBlock(blockAux);
-
-			if (block) {
-				res.send(block);
-			} else {
-				res.status(500).send('Error on add block.');
-			}
+			//TODO
+			// const body = req.body;
+			//
+			// if(!body || !body.body){
+			// 	res.status(500).send('Missing required field "body"');
+			// 	return;
+			// }
+			//
+			// const blockAux = new Block(body.body);
+			// const block = await this.blockchain.addBlock(blockAux);
+			//
+			// if (block) {
+			// 	res.send(block);
+			// } else {
+			// 	res.status(500).send('Error on add block.');
+			// }
 		});
 	}
 
