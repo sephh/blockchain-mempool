@@ -1,3 +1,5 @@
+const Mempool = require('../components/Mempool');
+
 /**
  * Controller definition to encapsulate Mempool express routes
  */
@@ -5,6 +7,7 @@ class MempoolController {
 
 	constructor(express) {
 		this.express = express;
+		this.mempool = new Mempool();
 		this.requestValidation();
 		this.validateMessage();
 	}
@@ -20,7 +23,19 @@ class MempoolController {
 	 */
 	requestValidation() {
 		this.express.post('/requestValidation', (req, res) => {
-			//TODO
+			const { address } = req.body;
+
+			if (!address) {
+				res.status(500).send('Missing required field "address"');
+			}
+
+			const request = this.mempool.getRequestValidation(address);
+
+			if (!request) {
+				this.mempool.addRequestValidation(address);
+			}
+
+			res.send(this.mempool.getRequestValidation(address));
 		});
 	}
 
@@ -40,4 +55,6 @@ class MempoolController {
 
 }
 
-module.exports = MempoolController;
+module.exports = (express) => {
+	return new MempoolController(express);
+}

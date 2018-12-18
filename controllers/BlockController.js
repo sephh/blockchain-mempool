@@ -1,5 +1,5 @@
-const Blockchain = require('./BlockChain.js');
-const Block = require('./Block.js');
+const Blockchain = require('../components/BlockChain.js');
+const Block = require('../components/Block.js');
 
 /**
  * Controller Definition to encapsulate routes to work with blocks

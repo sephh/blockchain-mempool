@@ -24,8 +24,8 @@ class APIServer {
 	}
 
 	initControllers() {
-		require('./BlockController.js')(this.server);
-		require('./MempoolController.js')(this.server);
+		require('./controllers/BlockController.js')(this.server);
+		require('./controllers/MempoolController.js')(this.server);
 	}
 
 	startServer() {
