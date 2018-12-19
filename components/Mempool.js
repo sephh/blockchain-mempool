@@ -6,7 +6,6 @@ class Mempool {
 
 	constructor() {
 		this.validationRequests = {};
-		this.validationTimeouts = {};
 		this.validRequests = {};
 	}
 
@@ -14,21 +13,28 @@ class Mempool {
 		const timeStamp = utils.getCurrentTimeStamp();
 
 		this.validationRequests[address] = {
-			walletAddress: address,
-			requestTimeStamp: timeStamp,
-			message: `${address}:${timeStamp}:starRegistry`,
+			value: {
+				walletAddress: address,
+				requestTimeStamp: timeStamp,
+				message: `${address}:${timeStamp}:starRegistry`,
+			},
+			timeout: setTimeout(() => this.removeRequestValidation(address), FIVE_MINUTES),
 		};
-
-		this.validationTimeouts[address] = setTimeout(() => this.removeRequestValidation(address), FIVE_MINUTES);
 	}
 
-	removeRequestValidation(address) {
-		if (!this.validationRequests[address]) return;
+	addValidRequest(request) {
+		const { walletAddress, ...rest } = request;
 
-		clearTimeout(this.validationTimeouts[address]);
+		this.validRequests[walletAddress] = {
+			registerStar: true,
+			status: {
+				...rest,
+				address: walletAddress,
+				messageSignature: true,
+			},
+		};
 
-		delete this.validationRequests[address];
-		delete this.validationTimeouts[address];
+		this.removeRequestValidation(walletAddress);
 	}
 
 	getRequestValidation(address) {
@@ -36,12 +42,26 @@ class Mempool {
 
 		if (request) {
 			return {
-				...request,
-				validationWindow: this.getTimeLeft(request.requestTimeStamp),
+				...request.value,
+				validationWindow: this.getTimeLeft(request.value.requestTimeStamp),
 			};
 		}
 
 		return null;
+	}
+
+	getValidRequest(address){
+		return this.validRequests[address];
+	}
+
+	removeRequestValidation(address) {
+		const request = this.validationRequests[address];
+
+		if (!request) return;
+
+		clearTimeout(request.timeout);
+
+		delete this.validationRequests[address];
 	}
 
 	getTimeLeft(previousTime) {

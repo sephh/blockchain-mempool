@@ -1,3 +1,5 @@
+const bitcoinMessage = require('bitcoinjs-message');
+
 const Mempool = require('../components/Mempool');
 
 /**
@@ -49,7 +51,33 @@ class MempoolController {
 	 */
 	validateMessage() {
 		this.express.post('/message-signature/validate', (req, res) => {
-			//TODO
+			const { address, signature } = req.body;
+
+			if (!address || !signature) {
+				res.status(500).send('Missing required field "address" or "signature"');
+			}
+
+			const request = this.mempool.getRequestValidation(address);
+
+			if (!request) {
+				res.status(404).send('Wallet not found. Please, add a wallet to validation.');
+			}
+
+			const { message, validationWindow } = request;
+
+			if (validationWindow <= 0) {
+				res.status(500).send('Sorry, the validation expired.');
+			}
+
+			const isValid = bitcoinMessage.verify(message, address, signature);
+
+			if (!isValid) {
+				res.status(401).send('Invalid signature.');
+			}
+
+			this.mempool.addValidRequest(request);
+
+			res.send(this.mempool.getValidRequest(address));
 		});
 	}
 
