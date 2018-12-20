@@ -87,7 +87,7 @@ class BlockController {
 				}
 
 				return res.status(500).send('Error on add block.');
-			} catch(e) {
+			} catch (e) {
 				console.log('Error: ', e);
 				return res.status(500).send('Server internal error');
 			}
@@ -96,28 +96,28 @@ class BlockController {
 
 	/**
 	 * @name Get Star by Hash
-	 * @route {Get} /stars/:hash
+	 * @route {Get} /stars/hash:hash
 	 * @queryparam hash {String} the star block hash
 	 * @response the block of the related hash
 	 */
 	getStarByHash() {
-		this.express.get('/stars/:hash', async (req, res) => {
-			//TODO
-			// const body = req.body;
-			//
-			// if(!body || !body.body){
-			// 	res.status(500).send('Missing required field "body"');
-			// 	return;
-			// }
-			//
-			// const blockAux = new Block(body.body);
-			// const block = await this.blockchain.addBlock(blockAux);
-			//
-			// if (block) {
-			// 	res.send(block);
-			// } else {
-			// 	res.status(500).send('Error on add block.');
-			// }
+		const { blockchain } = this;
+
+		this.express.get('/stars/hash::hash', async (req, res) => {
+			try {
+				const { hash } = req.params;
+				const block = await blockchain.getBlockByHash(hash);
+
+				if (block) {
+					return res.send(this.decodeStarStory(block));
+				}
+
+				return res.status(404).send('Record not found');
+			} catch (e) {
+				console.log('Error: ', e);
+				return res.status(500).send('Server internal error');
+			}
+
 		});
 	}
 
@@ -146,6 +146,24 @@ class BlockController {
 			// 	res.status(500).send('Error on add block.');
 			// }
 		});
+	}
+
+	/**
+	 * @description decode the hex string story and add to a new attribute storyDecoded
+	 * @param block
+	 * @return {Object}
+	 */
+	decodeStarStory(block) {
+		return {
+			...block,
+			body: {
+				...block.body,
+				star: {
+					...block.body.star,
+					storyDecoded: new Buffer.from(block.body.star.story, 'hex').toString('utf8'),
+				},
+			}
+		}
 	}
 
 }

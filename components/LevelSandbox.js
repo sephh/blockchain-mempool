@@ -49,6 +49,7 @@ class LevelSandbox {
 	// Method that return the height
 	getBlocksCount() {
 		let self = this;
+
 		return new Promise(function (resolve, reject) {
 			let count = 0;
 			self.db.createReadStream()
@@ -60,6 +61,33 @@ class LevelSandbox {
 				})
 				.on('close', function () {
 					resolve(count)
+				});
+		});
+	}
+
+	/**
+	 * @description get block by hash
+	 * @param hash
+	 * @return {Promise<Block>}
+	 */
+	getBlockByHash(hash) {
+		let self = this;
+		let block = null;
+
+		return new Promise(function (resolve, reject) {
+
+			self.db.createReadStream()
+				.on('data', function (data) {
+					const auxBlock = JSON.parse(data.value);
+					if (auxBlock.hash === hash) {
+						block = auxBlock;
+					}
+				})
+				.on('error', function (err) {
+					reject(err);
+				})
+				.on('close', function () {
+					resolve(block)
 				});
 		});
 	}

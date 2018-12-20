@@ -71,11 +71,20 @@ class Blockchain {
 	/**
 	 * @description Get Block By Height
 	 * @param height
-	 * @return {Promise<Object>}
+	 * @return {Promise<Block>}
 	 */
 	async getBlock(height) {
 		const block = await this.bd.getLevelDBData(height);
 		return block ? JSON.parse(block) : block;
+	}
+
+	/**
+	 * @description Get Block By Hash
+	 * @param hash
+	 * @return {Promise<Block>}
+	 */
+	async getBlockByHash(hash) {
+		return await this.bd.getBlockByHash(hash);
 	}
 
 	/**
