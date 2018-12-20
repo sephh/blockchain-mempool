@@ -1,15 +1,13 @@
 const bitcoinMessage = require('bitcoinjs-message');
 
-const Mempool = require('../components/Mempool');
-
 /**
  * Controller definition to encapsulate Mempool express routes
  */
 class MempoolController {
 
-	constructor(express) {
+	constructor(express, mempool) {
 		this.express = express;
-		this.mempool = new Mempool();
+		this.mempool = mempool;
 		this.requestValidation();
 		this.validateMessage();
 	}
@@ -28,7 +26,7 @@ class MempoolController {
 			const { address } = req.body;
 
 			if (!address) {
-				res.status(500).send('Missing required field "address"');
+				return res.status(500).send('Missing required field "address"');
 			}
 
 			const request = this.mempool.getRequestValidation(address);
@@ -37,7 +35,7 @@ class MempoolController {
 				this.mempool.addRequestValidation(address);
 			}
 
-			res.send(this.mempool.getRequestValidation(address));
+			return res.send(this.mempool.getRequestValidation(address));
 		});
 	}
 
@@ -54,35 +52,35 @@ class MempoolController {
 			const { address, signature } = req.body;
 
 			if (!address || !signature) {
-				res.status(500).send('Missing required field "address" or "signature"');
+				return res.status(500).send('Missing required field "address" or "signature"');
 			}
 
 			const request = this.mempool.getRequestValidation(address);
 
 			if (!request) {
-				res.status(404).send('Wallet not found. Please, add a wallet to validation.');
+				return res.status(404).send('Wallet not found. Please, add a wallet to validation.');
 			}
 
 			const { message, validationWindow } = request;
 
 			if (validationWindow <= 0) {
-				res.status(500).send('Sorry, the validation expired.');
+				return res.status(500).send('Sorry, the validation expired.');
 			}
 
 			const isValid = bitcoinMessage.verify(message, address, signature);
 
 			if (!isValid) {
-				res.status(401).send('Invalid signature.');
+				return res.status(500).send('Invalid signature.');
 			}
 
 			this.mempool.addValidRequest(request);
 
-			res.send(this.mempool.getValidRequest(address));
+			return res.send(this.mempool.getValidRequest(address));
 		});
 	}
 
 }
 
-module.exports = (express) => {
-	return new MempoolController(express);
+module.exports = (express, mempool) => {
+	return new MempoolController(express, mempool);
 }

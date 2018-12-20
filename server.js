@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Mempool = require('./components/Mempool');
 
 class APIServer {
 
 	constructor() {
 		this.server = express();
+		this.mempool = new Mempool();
 	}
 
 	init() {
@@ -24,8 +26,8 @@ class APIServer {
 	}
 
 	initControllers() {
-		require('./controllers/BlockController.js')(this.server);
-		require('./controllers/MempoolController.js')(this.server);
+		require('./controllers/BlockController.js')(this.server, this.mempool);
+		require('./controllers/MempoolController.js')(this.server, this.mempool);
 	}
 
 	startServer() {

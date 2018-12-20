@@ -1,6 +1,7 @@
 const Utils = require('../utils');
 const utils = new Utils();
 const FIVE_MINUTES = 5 * 60 * 1000;
+const THIRTY_MINUTES = 30 * 60 * 1000;
 
 class Mempool {
 
@@ -26,12 +27,15 @@ class Mempool {
 		const { walletAddress, ...rest } = request;
 
 		this.validRequests[walletAddress] = {
-			registerStar: true,
-			status: {
-				...rest,
-				address: walletAddress,
-				messageSignature: true,
+			value: {
+				registerStar: true,
+				status: {
+					...rest,
+					address: walletAddress,
+					messageSignature: true,
+				},
 			},
+			timeout: setTimeout(() => this.removeValidRequest(walletAddress), THIRTY_MINUTES),
 		};
 
 		this.removeRequestValidation(walletAddress);
@@ -50,8 +54,14 @@ class Mempool {
 		return null;
 	}
 
-	getValidRequest(address){
-		return this.validRequests[address];
+	getValidRequest(address) {
+		const request = this.validRequests[address];
+
+		if (request) {
+			return request.value;
+		}
+
+		return null;
 	}
 
 	removeRequestValidation(address) {
@@ -62,6 +72,16 @@ class Mempool {
 		clearTimeout(request.timeout);
 
 		delete this.validationRequests[address];
+	}
+
+	removeValidRequest(address) {
+		const request = this.validRequests[address];
+
+		if (!request) return;
+
+		clearTimeout(request.timeout);
+
+		delete this.validRequests[address];
 	}
 
 	getTimeLeft(previousTime) {
