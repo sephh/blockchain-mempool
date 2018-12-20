@@ -35,7 +35,7 @@ class BlockController {
 			const block = await blockchain.getBlock(height);
 
 			if (block) {
-				return res.send(block);
+				return res.send(this.decodeStarStory(block));
 			}
 
 			return res.status(404).send('Record not found');
@@ -96,7 +96,7 @@ class BlockController {
 
 	/**
 	 * @name Get Star by Hash
-	 * @route {Get} /stars/hash:hash
+	 * @route {Get} /stars/hash::hash
 	 * @queryparam hash {String} the star block hash
 	 * @response the block of the related hash
 	 */
@@ -123,28 +123,28 @@ class BlockController {
 
 	/**
 	 * @name Get Starts by Address
-	 * @route {Get} /stars/:address
+	 * @route {Get} /stars/address::address
 	 * @queryparam hash {String} the star block hash
 	 * @response the block of the related hash
 	 */
 	getStarsByAddress() {
-		this.express.get('/stars/:address', async (req, res) => {
-			//TODO
-			// const body = req.body;
-			//
-			// if(!body || !body.body){
-			// 	res.status(500).send('Missing required field "body"');
-			// 	return;
-			// }
-			//
-			// const blockAux = new Block(body.body);
-			// const block = await this.blockchain.addBlock(blockAux);
-			//
-			// if (block) {
-			// 	res.send(block);
-			// } else {
-			// 	res.status(500).send('Error on add block.');
-			// }
+		const { blockchain } = this;
+
+		this.express.get('/stars/address::address', async (req, res) => {
+			try {
+				const { address } = req.params;
+				const blocks = await blockchain.getBlocksByAddress(address);
+
+				if (blocks) {
+					return res.send(blocks.map(block => this.decodeStarStory(block)));
+				}
+
+				return res.status(404).send('Record not found');
+			} catch (e) {
+				console.log('Error: ', e);
+				return res.status(500).send('Server internal error');
+			}
+
 		});
 	}
 
@@ -154,13 +154,17 @@ class BlockController {
 	 * @return {Object}
 	 */
 	decodeStarStory(block) {
+		if (!block || !block.body || !block.body.star || !block.body.star.story) {
+			return block;
+		}
+
 		return {
 			...block,
 			body: {
 				...block.body,
 				star: {
 					...block.body.star,
-					storyDecoded: new Buffer.from(block.body.star.story, 'hex').toString('utf8'),
+					storyDecoded: new Buffer.from(block.body.star.story, 'hex').toString('ASCII'),
 				},
 			}
 		}

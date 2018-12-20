@@ -88,6 +88,15 @@ class Blockchain {
 	}
 
 	/**
+	 * @description Get Block By Hash
+	 * @param address
+	 * @return {Promise<Block[]>}
+	 */
+	async getBlocksByAddress(address) {
+		return await this.bd.getBlocksByAddress(address);
+	}
+
+	/**
 	 * @description Validate if Block is being tampered by Block Height
 	 * @param height
 	 * @return {Promise<boolean>}

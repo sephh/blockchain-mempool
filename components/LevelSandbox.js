@@ -79,7 +79,7 @@ class LevelSandbox {
 			self.db.createReadStream()
 				.on('data', function (data) {
 					const auxBlock = JSON.parse(data.value);
-					if (auxBlock.hash === hash) {
+					if (auxBlock && auxBlock.hash === hash) {
 						block = auxBlock;
 					}
 				})
@@ -88,6 +88,33 @@ class LevelSandbox {
 				})
 				.on('close', function () {
 					resolve(block)
+				});
+		});
+	}
+
+	/**
+	 * @description get blocks by address
+	 * @param address
+	 * @return {Promise<Block[]>}
+	 */
+	getBlocksByAddress(address) {
+		let self = this;
+		let blocks = [];
+
+		return new Promise(function (resolve, reject) {
+
+			self.db.createReadStream()
+				.on('data', function (data) {
+					const auxBlock = JSON.parse(data.value);
+					if (auxBlock.body && auxBlock.body.address === address) {
+						blocks.push(auxBlock);
+					}
+				})
+				.on('error', function (err) {
+					reject(err);
+				})
+				.on('close', function () {
+					resolve(blocks)
 				});
 		});
 	}
