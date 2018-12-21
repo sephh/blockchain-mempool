@@ -21,6 +21,7 @@ Body Example:
 {
     "address": "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL",
 }
+```
 
 * POST /message-signature/validate
 
@@ -33,6 +34,7 @@ Body Example:
     "address": "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL",
     "signature":"H8K4+1MvyJo9tcr2YN2KejwvX1oqneyCH+fsUL1z1WBdWmswB9bijeFfOfMqK68kQ5RO6ZxhomoXQG3fkLaBl+Q="
 }
+```
 
 * POST /block
 
