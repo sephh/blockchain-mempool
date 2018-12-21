@@ -10,6 +10,10 @@ class Mempool {
 		this.validRequests = {};
 	}
 
+	/**
+	 * @description add a requestValidation to the validationRequests object
+	 * @param address
+	 */
 	addRequestValidation(address) {
 		const timeStamp = utils.getCurrentTimeStamp();
 
@@ -23,6 +27,10 @@ class Mempool {
 		};
 	}
 
+	/**
+	 * @description add a valid request to the validRequests object
+	 * @param request
+	 */
 	addValidRequest(request) {
 		const { walletAddress, ...rest } = request;
 
@@ -41,6 +49,11 @@ class Mempool {
 		this.removeRequestValidation(walletAddress);
 	}
 
+	/**
+	 * @description get a request validation by address
+	 * @param address
+	 * @return {*}
+	 */
 	getRequestValidation(address) {
 		const request = this.validationRequests[address];
 
@@ -54,6 +67,11 @@ class Mempool {
 		return null;
 	}
 
+	/**
+	 * @description get a valid request by address
+	 * @param address
+	 * @return {*}
+	 */
 	getValidRequest(address) {
 		const request = this.validRequests[address];
 
@@ -64,6 +82,10 @@ class Mempool {
 		return null;
 	}
 
+	/**
+	 * @description remove a request validation and clean the timeout
+	 * @param address
+	 */
 	removeRequestValidation(address) {
 		const request = this.validationRequests[address];
 
@@ -74,6 +96,10 @@ class Mempool {
 		delete this.validationRequests[address];
 	}
 
+	/**
+	 * @description remove a valid request and clean the timeout
+	 * @param address
+	 */
 	removeValidRequest(address) {
 		const request = this.validRequests[address];
 
@@ -84,6 +110,11 @@ class Mempool {
 		delete this.validRequests[address];
 	}
 
+	/**
+	 * @description a helper function to get the validation window of requests
+	 * @param previousTime
+	 * @return {number}
+	 */
 	getTimeLeft(previousTime) {
 		const timeElapse = utils.getCurrentTimeStamp() - previousTime;
 		return (FIVE_MINUTES / 1000) - timeElapse;

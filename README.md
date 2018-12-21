@@ -1,6 +1,6 @@
-# Project #3. RESTful Web API with Node.js Framework
+# Project #4. Private Blockchain Notary Service
 
-This is Project 3, RESTful Web API with Node.js Framework, in this project I created the classes to manage my RESTful Web API with Node.js Framework, to be able to access my API endpoints I used Express.
+This is Project 4,Private Blockchain Notary Service, in this project I created the classes to manage validation requests and after validation, Post and Get stars info.
 
 ## Setup project for Review.
 
@@ -11,21 +11,28 @@ To setup the project for review do the following:
 
 ## Project Endpoints
 
-* GET /block/:height:
+* POST /requestValidation
 
-Returns a JSON object with the block info
+Store a address to future validation.
 
-Response Example:
+Body Example:
 
 ```
 {
-    "hash": "169fdca47690a209e95e583588c07b248d19f29499fbb8d50c362d457d2c4176",
-    "height": 66,
-    "body": "Test Block - 66",
-    "time": "1544434070",
-    "previousBlockHash": "8c84e5212554e24f3c976ff60057efef1618aa318a8e463027f674bee022a01d"
+    "address": "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL",
 }
+
+* POST /message-signature/validate
+
+Validate the address
+
+Body Example:
+
 ```
+{
+    "address": "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL",
+    "signature":"H8K4+1MvyJo9tcr2YN2KejwvX1oqneyCH+fsUL1z1WBdWmswB9bijeFfOfMqK68kQ5RO6ZxhomoXQG3fkLaBl+Q="
+}
 
 * POST /block
 
@@ -35,18 +42,24 @@ Body Example:
 
 ```
 {
-    "body": "Your block value",
+    "address": "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL",
+    "star": {
+            "dec": "68° 52' 56.9",
+            "ra": "16h 29m 1.0s",
+            "story": "Found star using https://www.google.com/sky/"
+        }
+    },
 }
 ```
 
-Response Example:
+* GET /stars/hash:[HASH]
 
-```
-{
-    "hash": "169fdca47690a209e95e583588c07b248d19f29499fbb8d50c362d457d2c4176",
-    "height": 66,
-    "body": "Your block value",
-    "time": "1544434070",
-    "previousBlockHash": "8c84e5212554e24f3c976ff60057efef1618aa318a8e463027f674bee022a01d"
-}
-```
+Returns a JSON object with the star info
+
+* GET /stars/address:[ADDRESS]
+
+Returns a ARRAY with all stars related to the address
+
+* GET /block/:height
+
+Returns a JSON object with the star info
