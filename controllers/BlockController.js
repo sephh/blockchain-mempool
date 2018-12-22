@@ -64,8 +64,7 @@ class BlockController {
 					return res.status(401).send('The address must be validated');
 				}
 
-				const starObject = JSON.parse(star);
-				const { ra, dec, story } = starObject;
+				const { ra, dec, story } = star;
 
 				if (!ra || !dec || !story) {
 					return res.status(500).send('Missing star required field ra, dec or story');
@@ -74,7 +73,7 @@ class BlockController {
 				const body = {
 					address,
 					star: {
-						...starObject,
+						...star,
 						story: new Buffer.from(story).toString('hex'),
 					}
 				};

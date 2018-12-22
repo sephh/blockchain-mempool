@@ -50,7 +50,6 @@ Body Example:
             "ra": "16h 29m 1.0s",
             "story": "Found star using https://www.google.com/sky/"
         }
-    },
 }
 ```
 
