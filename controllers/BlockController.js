@@ -82,6 +82,7 @@ class BlockController {
 				const block = await this.blockchain.addBlock(blockAux);
 
 				if (block) {
+					this.mempool.removeValidRequest(address);
 					return res.send(block);
 				}
 
